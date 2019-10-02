@@ -13,28 +13,18 @@ function setup () {
 	console.log(data);
 	frameRate(30);
 
-	//loop through features to get minLatitude, maxLatitude, minLongitute, maxLongitute
-	for(var i=0; i<features.length; i++){
-		var f = features[i];
-		var coordinatesArray = f.geometry.coordinates;
-		for(var j=0; j<coordinatesArray.length; j++){
-			var aContour = coordinatesArray[j];
-			var coords = aContour[0];
-			console.log('coords');
-			console.log(coords);
-			for(var k=0; k<coords.length; j++){
-				var lonlat = coords[k];
-				
-			}
-		}
-	}
+	console.log('start getting bounds');
+	bounds = getBounds(data);
+	console.log('done');
+	console.log(bounds);
 
 	noLoop();
 }
 
 function draw () {
 
-	background(200);
+	console.log('draw');
+	background(255);
 
 	var features = data.features;
 
@@ -45,14 +35,24 @@ function draw () {
 		for(var j=0; j<coordinatesArray.length; j++){
 			var aContour = coordinatesArray[j];
 			var coords = aContour[0];
-			console.log('coords');
-			console.log(coords);
-			for(var k=0; k<coords.length; j++){
+			
+			//draw a contour line
+			beginShape();
+			noFill();
+			stroke(0);
+			for(var k=0; k<coords.length; k++){
 				var lonlat = coords[k];
-
+				var lon = lonlat[0];
+				var lat = lonlat[1];
+				var x = map(lon,bounds.minLon,bounds.maxLon,0,width);
+				var y = map(lat,bounds.minLat,bounds.maxLat,height,0);
+				vertex(x,y);
 			}
+			endShape();
 		}
 	}
+
+
 
 
 }
@@ -68,7 +68,7 @@ function getBounds(geojson){
 		maxLon: Number.MIN_VALUE
 	};
 
-	var features = data.features;
+	var features = geojson.features;
 
 	//loop through features
 	for(var i=0; i<features.length; i++){
@@ -77,9 +77,9 @@ function getBounds(geojson){
 		for(var j=0; j<coordinatesArray.length; j++){
 			var aContour = coordinatesArray[j];
 			var coords = aContour[0];
-			console.log('coords');
-			console.log(coords);
-			for(var k=0; k<coords.length; j++){
+			
+			
+			for(var k=0; k<coords.length; k++){
 				var lonlat = coords[k];
 				var lon = lonlat[0];
 				var lat = lonlat[1];
@@ -98,6 +98,7 @@ function getBounds(geojson){
 			}
 		}
 	}
+	return bnd;
 }
 
 
